@@ -1,0 +1,130 @@
+/* Existing Animations */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.fade-enter {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Modal Entry with Spring Effect */
+@keyframes modalEntry {
+    0% {
+        opacity: 0;
+        transform: scale(0.8) translateY(30px);
+    }
+
+    50% {
+        transform: scale(1.05) translateY(-5px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* View Slide In */
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Pulse Effect - For flight status */
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.7;
+        transform: scale(1.05);
+    }
+}
+
+.pulse {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+/* Number Counter Animation */
+@keyframes countUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.count-up {
+    animation: countUp 0.4s ease-out;
+}
+
+/* Stagger Animation for Lists */
+@keyframes staggerFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Glow Pulse for Active Elements */
+@keyframes glowPulse {
+
+    0%,
+    100% {
+        filter: drop-shadow(0 0 5px var(--primary-glow));
+    }
+
+    50% {
+        filter: drop-shadow(0 0 15px var(--primary-glow));
+    }
+}

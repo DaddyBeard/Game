@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="description" content="Gestiona tu aerolínea y domina los cielos en este simulador offline.">
+    <title>SkyTycoon: Airline Manager</title>
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="assets/icon-192.png">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/ui.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/animations.css">
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <link rel="stylesheet" href="css/visuals.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Space+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div id="app">
+        <!-- Status Bar (Money, Rep, Date) -->
+        <header class="status-bar">
+            <div class="stat-group energy">
+                <span class="icon">⚡</span>
+                <span id="energy-val">100/100</span>
+            </div>
+            <div class="stat-group level">
+                <span class="icon">🎯</span>
+                <span id="level-val">Lv 1</span>
+                <span id="level-progress" style="display:inline-block; width: 18px; height: 18px; margin-left: 6px; border-radius: 50%; background: conic-gradient(#22c55e 0%, rgba(255,255,255,0.2) 0%);
+                    box-shadow: inset 0 0 0 2px rgba(255,255,255,0.12);
+                " title="Progreso al próximo nivel"></span>
+            </div>
+            <div class="stat-group money">
+                <span class="icon">💵</span>
+                <span id="money-val">$0</span>
+            </div>
+            <div class="stat-group reputation">
+                <span class="icon">⭐</span>
+                <span id="reputation-val">50/100</span>
+            </div>
+            <div class="stat-group date">
+                <span id="game-date">ENE 2025</span>
+            </div>
+
+            <!-- Time Controls -->
+            <div class="time-controls">
+                <button id="btn-pause" class="time-btn" title="Pausar (Espacio)">
+                    <span class="icon">⏸️</span>
+                </button>
+                <button id="btn-speed-1x" class="time-btn active" data-speed="1" title="Velocidad Normal (1)">
+                    1x
+                </button>
+                <button id="btn-speed-2x" class="time-btn" data-speed="2" title="Velocidad Rápida (2)">
+                    2x
+                </button>
+                <button id="btn-speed-5x" class="time-btn" data-speed="5" title="Velocidad Muy Rápida (3)">
+                    5x
+                </button>
+            </div>
+        </header>
+
+        <!-- Hub Selection Overlay (shown at game start) -->
+        <div id="hub-selection-overlay" class="hub-selection-overlay hidden">
+            <div class="hub-selection-container">
+                <div class="hub-selection-header">
+                    <h1>🌍 Bienvenido a SkyTycoon</h1>
+                    <p style="color: #94a3b8; margin: 0.5rem 0 2rem 0;">Elige tu hub principal y comienza tu imperio aéreo</p>
+                </div>
+
+                <div class="hub-selection-form">
+                    <label style="display: block; margin-bottom: 1rem;">
+                        <span style="color: #cbd5e1; font-size: 0.9rem;">Nombre de Aerolínea</span>
+                        <input type="text" id="company-name-input" placeholder="Ej: AirMagic Airlines" 
+                            style="width: 100%; padding: 0.75rem; margin-top: 0.5rem; background: rgba(15,23,42,0.8); border: 1px solid rgba(148,163,184,0.3); border-radius: 8px; color: #e2e8f0; font-family: inherit;">
+                    </label>
+                    <label style="display: block; margin-bottom: 1rem;">
+                        <span style="color: #cbd5e1; font-size: 0.9rem;">Código IATA (2 letras)</span>
+                        <input type="text" id="company-iata-input" placeholder="Ej: IB" maxlength="2" 
+                            style="width: 100%; padding: 0.75rem; margin-top: 0.5rem; background: rgba(15,23,42,0.8); border: 1px solid rgba(148,163,184,0.3); border-radius: 8px; color: #e2e8f0; font-family: monospace; text-transform: uppercase;">
+                    </label>
+                </div>
+
+                <div class="hub-selection-grid" id="hub-grid">
+                    <!-- Populated by JS -->
+                </div>
+
+                <div style="margin-top: 2rem; text-align: center;">
+                    <button id="btn-confirm-hub" class="btn-primary" style="padding: 1rem 2rem; font-size: 1.1rem; min-width: 200px;" disabled>
+                        Comenzar Aventura
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Game View -->
+        <main id="main-view" class="view-container">
+            <!-- Dynamic Content Loaded Here -->
+            <div id="dashboard-view" class="view active">
+                <h2 style="margin-bottom: 1.5rem;">Dashboard</h2>
+                <div class="hero-card">
+                    <h3
+                        style="margin: 0 0 1rem 0; font-size: 1rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em;">
+                        Resumen Global</h3>
+                    <div class="kpi-grid" style="grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+                        <div class="kpi-card">
+                            <span class="label">Balance</span>
+                            <span class="value" id="dash-money">$0</span>
+                        </div>
+                        <div class="kpi-card">
+                            <span class="label">Rutas Activas</span>
+                            <span class="value" id="dash-routes">0</span>
+                        </div>
+                        <div class="kpi-card">
+                            <span class="label">Flota</span>
+                            <span class="value" id="dash-fleet">0</span>
+                        </div>
+                        <div class="kpi-card">
+                            <span class="label">Ingresos/Día</span>
+                            <span class="value" id="dash-revenue" style="color: #4ade80;">$0</span>
+                        </div>
+                        <div class="kpi-card">
+                            <span class="label">Gastos/Día</span>
+                            <span class="value" id="dash-costs" style="color: #f87171;">$0</span>
+                        </div>
+                        <div class="kpi-card">
+                            <span class="label">Beneficio/Día</span>
+                            <span class="value" id="dash-net" style="color: #22c55e;">$0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hero-card" style="margin-top: 1rem;">
+                    <h3
+                        style="margin: 0 0 1rem 0; font-size: 1rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em;">
+                        Reputación</h3>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div style="flex: 1;">
+                            <div style="background: rgba(255,255,255,0.1); height: 20px; border-radius: 10px; overflow: hidden;">
+                                <div id="rep-bar" style="background: #f59e0b; height: 100%; width: 50%; transition: width 0.3s ease;"></div>
+                            </div>
+                        </div>
+                        <span id="dash-reputation" style="font-size: 1.5rem; font-weight: bold; min-width: 60px; text-align: right;">50/100</span>
+                    </div>
+                    <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 0.5rem;">
+                        <span id="rep-trend">↓ Factor ocupación: 85%</span>
+                    </div>
+                </div>
+
+                <div class="hero-card" style="margin-top: 1rem;">
+                    <h3
+                        style="margin: 0 0 1rem 0; font-size: 1rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em;">
+                        🚨 Alertas</h3>
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem;" id="alerts-list">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <div class="hero-card" style="margin-top: 1rem;">
+                    <h3
+                        style="margin: 0 0 1rem 0; font-size: 1rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em;">
+                        Progreso de Nivel</h3>
+                    <div id="level-panel" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem;">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <div class="hero-card" style="margin-top: 1rem;">
+                    <h3
+                        style="margin: 0 0 1rem 0; font-size: 1rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em;">
+                        � Hubs</h3>
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem;" id="hubs-list">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <div class="hero-card" style="margin-top: 1rem;">
+                    <h3
+                        style="margin: 0 0 1rem 0; font-size: 1rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em;">
+                        �🏆 Ranking Global</h3>
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem;" id="ranking-list">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <div class="hero-card" style="margin-top: 1rem;">
+                    <h3
+                        style="margin: 0 0 1rem 0; font-size: 1rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em;">
+                        Acceso Rápido</h3>
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                        <button class="btn-primary" onclick="window.app.ui.switchView('market')"
+                            style="width: 100%; padding: 1rem; border-radius: 12px;">
+                            🛒 Comprar Avión
+                        </button>
+                        <button class="btn-primary" onclick="window.app.ui.switchView('routes')"
+                            style="width: 100%; padding: 1rem; border-radius: 12px; background: #8b5cf6;">
+                            🗺️ Gestionar Rutas
+                        </button>
+                        <button id="btn-open-hub" class="btn-primary" style="width: 100%; padding: 1rem; border-radius: 12px; background: #10b981; display: none;">
+                            🏢 Abrir Hub Secundario
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="routes-view" class="view hidden">
+                <h2>Rutas</h2>
+                <div class="map-container"
+                    style="margin-bottom: 1rem; height: 400px; border-radius: 12px; overflow: visible; border: 1px solid rgba(255, 255, 255, 0.08); position: relative;">
+                    <div id="route-map" style="width: 100%; height: 100%;"></div>
+                    <div class="map-controls">
+                        <button id="btn-zoom-in" class="map-btn" title="Zoom In">+</button>
+                        <button id="btn-zoom-out" class="map-btn" title="Zoom Out">-</button>
+                        <button id="btn-test-panel" class="map-btn" title="Test Info Panel" style="background: rgba(59, 130, 246, 0.9); font-size: 1rem;">📊</button>
+                    </div>
+                </div>
+                <div id="routes-list"></div>
+            </div>
+
+            <div id="fleet-view" class="view hidden">
+                <!-- Javascript will render fleet here -->
+            </div>
+
+            <div id="market-view" class="view hidden">
+                <!-- Javascript will render market here -->
+            </div>
+
+            <div id="menu-view" class="view hidden">
+                <h2>Menú</h2>
+                <div class="menu-list">
+                    <button class="menu-item">Guardar Partida</button>
+                    <button class="menu-item">Ajustes</button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <button class="nav-btn active" data-target="dashboard">
+                <span class="icon">🏢</span>
+                <span class="label">Oficina</span>
+            </button>
+            <button class="nav-btn" data-target="routes">
+                <span class="icon">🗺️</span>
+                <span class="label">Rutas</span>
+            </button>
+            <button class="nav-btn" data-target="fleet">
+                <span class="icon">✈️</span>
+                <span class="label">Flota</span>
+            </button>
+            <button class="nav-btn" data-target="market">
+                <span class="icon">🛒</span>
+                <span class="label">Mercado</span>
+            </button>
+            <button class="nav-btn" data-target="menu">
+                <span class="icon">☰</span>
+                <span class="label">Menú</span>
+            </button>
+        </nav>
+
+        <!-- Overlays / Modals -->
+        <div id="modal-container" class="modal-overlay hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modal-title">Título</h3>
+                    <button class="close-btn">&times;</button>
+                </div>
+                <div id="modal-body" class="modal-body"></div>
+                <div id="modal-actions" class="modal-actions"></div>
+            </div>
+        </div>
+
+        <!-- Story/Dialogue Overlay -->
+        <div id="dialogue-overlay" class="dialogue-overlay hidden">
+            <div class="character-portrait"></div>
+            <div class="dialogue-box">
+                <h4 id="speaker-name">Speaker</h4>
+                <p id="dialogue-text">...</p>
+                <div id="dialogue-options" class="dialogue-options"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <script type="module" src="js/app.js"></script>
+</body>
+
+</html>
