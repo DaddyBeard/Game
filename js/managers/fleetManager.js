@@ -1,4 +1,5 @@
 import { Aircraft, AIRCRAFT_TYPES } from '../models/aircraft.js';
+import { getAircraftMinLevel } from '../models/levelSystem.js';
 
 export class FleetManager {
     constructor(game) {
@@ -31,22 +32,26 @@ export class FleetManager {
     }
 
     isAircraftUnlocked(typeId) {
-        const currentLevel = this.game.state.level || 1;
-        const LEVEL_REQUIREMENTS = window.LEVEL_REQUIREMENTS || {};
-        
-        for (let i = 1; i <= currentLevel; i++) {
-            const req = LEVEL_REQUIREMENTS[i];
-            if (req && req.unlocksAircraft && req.unlocksAircraft.includes(typeId)) {
-                return true;
-            }
+        // Usar LevelSystem si está disponible (FASE 5 - Integración LevelSystem)
+        if (this.game.levelSystem) {
+            return this.game.levelSystem.isAircraftUnlocked(typeId);
         }
         
-        return false;
+        // Fallback al método legacy
+        const currentLevel = this.game.state.level || 1;
+        const minLevel = getAircraftMinLevel(typeId);
+        return currentLevel >= minLevel;
     }
 
     buyAircraft(typeId, config = null, customRegistration = null) {
+        // Verificar desbloqueo con mensaje específico del nivel requerido (FASE 5)
         if (!this.isAircraftUnlocked(typeId)) {
-            return { success: false, msg: "Este avión está bloqueado por nivel" };
+            const minLevel = getAircraftMinLevel(typeId);
+            const currentLevel = this.game.state.level || 1;
+            return { 
+                success: false, 
+                msg: `Requiere nivel ${minLevel} para desbloquear este avión. Nivel actual: ${currentLevel}` 
+            };
         }
         if (!this.canAfford(typeId)) return { success: false, msg: "Fondos insuficientes" };
 
@@ -70,6 +75,25 @@ export class FleetManager {
         this.game.save();
 
         return { success: true, plane: newPlane };
+    }
+
+    // Obtener lista de aviones desbloqueados para el nivel actual (FASE 5)
+    getAvailableAircraft() {
+        if (this.game.levelSystem) {
+            return this.game.levelSystem.getUnlockedAircraft();
+        }
+        
+        // Fallback: retornar todos los aviones desbloqueados hasta el nivel actual
+        const currentLevel = this.game.state.level || 1;
+        return Object.entries(AIRCRAFT_TYPES)
+            .filter(([id, aircraft]) => {
+                const minLevel = aircraft.minLevel || 1;
+                return currentLevel >= minLevel;
+            })
+            .reduce((acc, [id, aircraft]) => {
+                acc[id] = aircraft;
+                return acc;
+            }, {});
     }
 
     getStats() {

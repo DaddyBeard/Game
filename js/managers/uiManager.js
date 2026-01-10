@@ -1,6 +1,7 @@
 ﻿import { AIRCRAFT_TYPES } from '../models/aircraft.js';
 import { AIRPORTS, Airport } from '../models/airport.js';
 import { LEVEL_REQUIREMENTS } from '../models/progressionModel.js';
+import { getAircraftMinLevel } from '../models/levelSystem.js';
 
 export class UIManager {
     constructor(game) {
@@ -2571,29 +2572,28 @@ export class UIManager {
                 card.style.filter = 'grayscale(80%)';
             }
 
+            const unlockLevel = isLocked ? this.getUnlockLevelForAircraft(plane.id) : null;
+            
             card.innerHTML = `
                 <div class="thumb" style="background-image: url('${plane.image}')${isLocked ? '; filter: grayscale(100%) brightness(0.6);' : ''}"></div>
                 <div class="info">
                     <h3>${plane.name}</h3>
-                    ${isLocked ? '<div style="color: #ef4444; font-size: 0.8rem; margin-bottom: 0.5rem;"><i class="fa-solid fa-lock"></i> Bloqueado</div>' : ''}
+                    ${isLocked ? `<div style="color: #ef4444; font-size: 0.8rem; margin-bottom: 0.5rem; font-weight: 600;"><i class="fa-solid fa-lock"></i> Requiere Nivel ${unlockLevel}</div>` : ''}
                     <div class="specs">
                         <span><i class="fa-solid fa-ruler"></i> ${plane.range}km</span>
                         <span><i class="fa-solid fa-users"></i> ${plane.seats} pax</span>
                     </div>
-                    <div style="margin-top: 0.75rem; font-size: 0.95rem; color: #4ade80; font-weight: 600;">
+                    <div style="margin-top: 0.75rem; font-size: 0.95rem; color: ${isLocked ? '#64748b' : '#4ade80'}; font-weight: 600;">
                         ${formatter.format(plane.price)}
                     </div>
                 </div>
-                <button class="btn-buy">${isLocked ? 'Bloqueado' : 'Ver'}</button>
+                <button class="btn-buy" ${isLocked ? 'style="opacity: 0.5; cursor: not-allowed;"' : ''}>${isLocked ? `<i class="fa-solid fa-lock"></i> Nivel ${unlockLevel}` : 'Ver'}</button>
             `;
 
             const btn = card.querySelector('.btn-buy');
             if (isLocked) {
-                btn.style.opacity = '0.5';
-                btn.style.cursor = 'not-allowed';
                 btn.addEventListener('click', () => {
-                    const unlockLevel = this.getUnlockLevelForAircraft(plane.id);
-                    this.showError(`<i class="fa-solid fa-lock"></i> Este avión se desbloquea en nivel ${unlockLevel}`);
+                    this.showPlaneDetails(plane); // Mostrar modal de bloqueo detallado
                 });
             } else {
                 btn.addEventListener('click', () => {
@@ -2608,12 +2608,25 @@ export class UIManager {
         // === AIRPORTS TAB ===
         const airportContainer = container.querySelector('.airports-container');
         const sortedAirports = Object.entries(AIRPORTS)
-            .sort((a, b) => a[1].minLevel - b[1].minLevel)
+            .sort((a, b) => (a[1].minLevel || 1) - (b[1].minLevel || 1))
             .slice(0, 50); // Show first 50 to avoid clutter
 
         let airportHTML = '';
         sortedAirports.forEach(([id, ap]) => {
-            const isUnlocked = Airport.isUnlockedAtLevel(ap, currentLevel);
+            // Usar LevelSystem para verificar desbloqueo (FASE 6)
+            let isUnlocked = true;
+            let unlockInfo = null;
+            
+            if (this.game && this.game.levelSystem) {
+                isUnlocked = this.game.levelSystem.isAirportUnlocked(ap, AIRPORTS);
+                if (!isUnlocked) {
+                    unlockInfo = this.game.levelSystem.getAirportUnlockInfo(ap, AIRPORTS);
+                }
+            } else {
+                // Fallback al método legacy
+                isUnlocked = Airport.isUnlockedAtLevel(ap, currentLevel);
+            }
+            
             const categoryEmoji = {
                 'mega-hub': '🌍',
                 'major-hub': '🌎',
@@ -2623,12 +2636,13 @@ export class UIManager {
             }[ap.category] || '🏢';
 
             airportHTML += `
-                <div class="airport-market-card" style="padding: 1rem; border: 1px solid #4b5563; border-radius: 8px; margin-bottom: 0.75rem; ${!isUnlocked ? 'opacity: 0.6; filter: grayscale(50%);' : ''}">
+                <div class="airport-market-card" style="padding: 1rem; border: 1px solid ${isUnlocked ? '#4b5563' : '#64748b'}; border-radius: 8px; margin-bottom: 0.75rem; ${!isUnlocked ? 'opacity: 0.6; filter: grayscale(50%); background: rgba(100, 116, 139, 0.1);' : ''}">
                     <div style="display: flex; justify-content: space-between; align-items: start;">
                         <div style="flex: 1;">
-                            <div style="font-weight: 600; font-size: 1.1rem; margin-bottom: 0.3rem;">
-                                ${categoryEmoji} ${ap.id} - ${ap.name}
+                            <div style="font-weight: 600; font-size: 1.1rem; margin-bottom: 0.3rem; display: flex; align-items: center; gap: 8px;">
+                                ${isUnlocked ? '' : '<i class="fa-solid fa-lock" style="color: #ef4444; font-size: 0.9rem;"></i>'}${categoryEmoji} ${ap.id} - ${ap.name}
                             </div>
+                            ${!isUnlocked && unlockInfo ? `<div style="color: #ef4444; font-size: 0.8rem; margin-bottom: 0.5rem; font-weight: 600;"><i class="fa-solid fa-lock"></i> ${unlockInfo.reason}</div>` : ''}
                             <div style="color: #cbd5e0; font-size: 0.9rem; margin-bottom: 0.5rem;">
                                 📍 ${ap.city}, ${ap.country} | 📊 ${(ap.pop).toFixed(1)}M pax
                             </div>
@@ -2653,7 +2667,12 @@ export class UIManager {
     }
 
     getUnlockedAircraft(level) {
-        // Use imported LEVEL_REQUIREMENTS - accumulate all unlocked aircraft up to current level
+        // Usar LevelSystem si está disponible (FASE 6 - Integración LevelSystem)
+        if (this.game && this.game.levelSystem) {
+            return this.game.levelSystem.getUnlockedAircraft();
+        }
+        
+        // Fallback: Use imported LEVEL_REQUIREMENTS - accumulate all unlocked aircraft up to current level
         const unlocked = [];
         
         // Ensure LEVEL_REQUIREMENTS is accessible
@@ -2678,7 +2697,12 @@ export class UIManager {
     }
 
     getUnlockLevelForAircraft(aircraftId) {
-        // Use imported LEVEL_REQUIREMENTS to find which level unlocks this aircraft
+        // Usar LevelSystem si está disponible (FASE 6 - Integración LevelSystem)
+        if (this.game && this.game.levelSystem) {
+            return getAircraftMinLevel(aircraftId) || 1;
+        }
+        
+        // Fallback: Use imported LEVEL_REQUIREMENTS to find which level unlocks this aircraft
         if (!LEVEL_REQUIREMENTS || typeof LEVEL_REQUIREMENTS !== 'object') {
             return 1; // Fallback
         }
@@ -4118,21 +4142,86 @@ export class UIManager {
             const planeId = planeSel.value;
             feasibleList = this.game.managers.routes.getFeasibleDestinations(planeId, origin);
             const q = (destSearch.value || '').trim().toLowerCase();
-            const filtered = feasibleList.filter(f => {
-                if (!q) return true;
+            
+            // Separar destinos desbloqueados y bloqueados (FASE 6 - Integración LevelSystem)
+            const unlocked = [];
+            const locked = [];
+            
+            feasibleList.forEach(f => {
                 const ap = AIRPORTS[f.id];
-                const text = `${ap?.city || ''} ${ap?.name || ''} ${f.id}`.toLowerCase();
-                return text.includes(q);
+                if (!ap) return;
+                
+                // Verificar si está desbloqueado usando levelSystem
+                let isUnlocked = true;
+                let unlockReason = '';
+                
+                if (this.game && this.game.levelSystem) {
+                    isUnlocked = this.game.levelSystem.isAirportUnlocked(ap, AIRPORTS);
+                    if (!isUnlocked) {
+                        const unlockInfo = this.game.levelSystem.getAirportUnlockInfo(ap, AIRPORTS);
+                        unlockReason = unlockInfo.reason;
+                    }
+                } else {
+                    // Fallback al método legacy
+                    const currentLevel = this.game.state.level || 1;
+                    isUnlocked = Airport.isUnlockedAtLevel(ap, currentLevel);
+                    if (!isUnlocked) {
+                        unlockReason = `Requiere nivel ${ap.minLevel || 1}`;
+                    }
+                }
+                
+                const item = { ...f, isUnlocked, unlockReason };
+                if (isUnlocked) {
+                    unlocked.push(item);
+                } else {
+                    locked.push(item);
+                }
             });
-            destSel.innerHTML = filtered.map(f => {
-                const ap = AIRPORTS[f.id];
-                const label = `${ap?.city || f.id} (${f.id}) · ${f.dist}km · pista ${ap?.runway || f.runway}m`;
-                return `<option value="${f.id}">${label}</option>`;
-            }).join('');
-            if (filtered.length === 0) {
-                destHelper.textContent = "No hay destinos factibles con el avión y hub seleccionados.";
+            
+            // Filtrar por búsqueda
+            const filterByQuery = (list) => {
+                if (!q) return list;
+                return list.filter(f => {
+                    const ap = AIRPORTS[f.id];
+                    const text = `${ap?.city || ''} ${ap?.name || ''} ${f.id}`.toLowerCase();
+                    return text.includes(q);
+                });
+            };
+            
+            const filteredUnlocked = filterByQuery(unlocked);
+            const filteredLocked = filterByQuery(locked);
+            
+            // Construir HTML con separación visual (FASE 6)
+            let optionsHTML = '';
+            
+            // Destinos desbloqueados
+            if (filteredUnlocked.length > 0) {
+                optionsHTML += filteredUnlocked.map(f => {
+                    const ap = AIRPORTS[f.id];
+                    const label = `${ap?.city || f.id} (${f.id}) · ${f.dist}km · pista ${ap?.runway || f.runway}m`;
+                    return `<option value="${f.id}">${label}</option>`;
+                }).join('');
+            }
+            
+            // Destinos bloqueados (deshabilitados con indicador)
+            if (filteredLocked.length > 0) {
+                if (filteredUnlocked.length > 0) {
+                    optionsHTML += `<optgroup label="--- Bloqueados ---" disabled></optgroup>`;
+                }
+                optionsHTML += filteredLocked.map(f => {
+                    const ap = AIRPORTS[f.id];
+                    const label = `🔒 ${ap?.city || f.id} (${f.id}) · ${f.dist}km · ${f.unlockReason || 'Bloqueado'}`;
+                    return `<option value="${f.id}" disabled style="color: #64748b; font-style: italic;">${label}</option>`;
+                }).join('');
+            }
+            
+            destSel.innerHTML = optionsHTML;
+            
+            if (filteredUnlocked.length === 0 && filteredLocked.length === 0) {
+                destHelper.innerHTML = "No hay destinos factibles con el avión y hub seleccionados.";
             } else {
-                destHelper.textContent = `${filtered.length} destinos disponibles`;
+                const lockedCount = filteredLocked.length > 0 ? ` (${filteredLocked.length} bloqueados)` : '';
+                destHelper.innerHTML = `<span style="color: #10b981;">${filteredUnlocked.length} destinos disponibles</span>${lockedCount ? `<span style="color: #64748b;">${lockedCount}</span>` : ''}`;
             }
         };
 

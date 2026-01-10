@@ -132,14 +132,21 @@ export class RouteManager {
     }
 
     // Get airports available for player's current level
+    // Usa LevelSystem para verificar desbloqueo completo (nivel, distancia, región)
     getAvailableAirports() {
-        const playerLevel = this.game.state.level || 1;
-        return Object.entries(AIRPORTS)
-            .filter(([id, ap]) => Airport.isUnlockedAtLevel(ap, playerLevel))
-            .reduce((acc, [id, ap]) => {
-                acc[id] = ap;
-                return acc;
-            }, {});
+        if (!this.game.levelSystem) {
+            console.warn('⚠️ LevelSystem no disponible, usando método legacy');
+            const playerLevel = this.game.state.level || 1;
+            return Object.entries(AIRPORTS)
+                .filter(([id, ap]) => Airport.isUnlockedAtLevel(ap, playerLevel))
+                .reduce((acc, [id, ap]) => {
+                    acc[id] = ap;
+                    return acc;
+                }, {});
+        }
+        
+        // Usar LevelSystem para obtener aeropuertos desbloqueados
+        return this.game.levelSystem.getUnlockedAirports(AIRPORTS);
     }
 
     validateRouteByHub(origin, dest) {
@@ -182,13 +189,20 @@ export class RouteManager {
         const plane = this.game.managers.fleet.ownedPlanes.find(p => p.instanceId === aircraftInstanceId);
         if (!plane) return [];
 
-        const playerLevel = this.game.state.level || 1;
         const originAp = AIRPORTS[originId];
         if (!originAp) return [];
 
         const result = [];
         for (const [id, ap] of Object.entries(AIRPORTS)) {
-            if (!Airport.isUnlockedAtLevel(ap, playerLevel)) continue;
+            // Verificar desbloqueo usando LevelSystem si está disponible
+            if (this.game.levelSystem) {
+                if (!this.game.levelSystem.isAirportUnlocked(ap, AIRPORTS)) continue;
+            } else {
+                // Fallback al método legacy
+                const playerLevel = this.game.state.level || 1;
+                if (!Airport.isUnlockedAtLevel(ap, playerLevel)) continue;
+            }
+            
             if (id === originId) continue;
             // Runway compatibility both sides
             if (plane.baseStats.runway > originAp.runway) continue;
@@ -265,6 +279,28 @@ export class RouteManager {
         // Hub validation
         const hubValidation = this.validateRouteByHub(originId, destId);
         if (!hubValidation.success) return hubValidation;
+
+        // Verificar que ambos aeropuertos estén desbloqueados (FASE 5 - Integración LevelSystem)
+        if (this.game.levelSystem) {
+            const originAp = AIRPORTS[originId];
+            const destAp = AIRPORTS[destId];
+            
+            if (originAp && !this.game.levelSystem.isAirportUnlocked(originAp, AIRPORTS)) {
+                const unlockInfo = this.game.levelSystem.getAirportUnlockInfo(originAp, AIRPORTS);
+                return { 
+                    success: false, 
+                    msg: `Aeropuerto origen ${originAp.city} (${originId}) no está desbloqueado. ${unlockInfo.reason}` 
+                };
+            }
+            
+            if (destAp && !this.game.levelSystem.isAirportUnlocked(destAp, AIRPORTS)) {
+                const unlockInfo = this.game.levelSystem.getAirportUnlockInfo(destAp, AIRPORTS);
+                return { 
+                    success: false, 
+                    msg: `Aeropuerto destino ${destAp.city} (${destId}) no está desbloqueado. ${unlockInfo.reason}` 
+                };
+            }
+        }
 
         const dist = this.getDistance(originId, destId);
         const plane = this.game.managers.fleet.ownedPlanes.find(p => p.instanceId === aircraftInstanceId);

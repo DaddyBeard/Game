@@ -15,6 +15,7 @@ export const AIRCRAFT_TYPES = {
         seats: 416,
         runway: 3300,
         fuelBurn: 50,
+        minLevel: 7,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Boeing+747-400'
     },
     B77W: {
@@ -28,6 +29,7 @@ export const AIRCRAFT_TYPES = {
         seats: 368,
         runway: 3000,
         fuelBurn: 48,
+        minLevel: 5,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Boeing+777-300ER'
     },
     B772: {
@@ -41,6 +43,7 @@ export const AIRCRAFT_TYPES = {
         seats: 314,
         runway: 2700,
         fuelBurn: 45,
+        minLevel: 6,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Boeing+777-200ER'
     },
     B789: {
@@ -54,6 +57,7 @@ export const AIRCRAFT_TYPES = {
         seats: 290,
         runway: 2600,
         fuelBurn: 40,
+        minLevel: 6,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Boeing+787-9'
     },
     B788: {
@@ -67,6 +71,7 @@ export const AIRCRAFT_TYPES = {
         seats: 242,
         runway: 2600,
         fuelBurn: 37,
+        minLevel: 4,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Boeing+787-8'
     },
     B78X: {
@@ -80,6 +85,7 @@ export const AIRCRAFT_TYPES = {
         seats: 330,
         runway: 2800,
         fuelBurn: 42,
+        minLevel: 7,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Boeing+787-10'
     },
     A332: {
@@ -93,6 +99,7 @@ export const AIRCRAFT_TYPES = {
         seats: 260,
         runway: 2600,
         fuelBurn: 38,
+        minLevel: 8,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Airbus+A330-200'
     },
     A333: {
@@ -106,6 +113,7 @@ export const AIRCRAFT_TYPES = {
         seats: 300,
         runway: 2700,
         fuelBurn: 40,
+        minLevel: 8,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Airbus+A330-300'
     },
     A359: {
@@ -119,6 +127,7 @@ export const AIRCRAFT_TYPES = {
         seats: 325,
         runway: 2800,
         fuelBurn: 42,
+        minLevel: 5,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Airbus+A350-900'
     },
     A35K: {
@@ -132,6 +141,7 @@ export const AIRCRAFT_TYPES = {
         seats: 366,
         runway: 3000,
         fuelBurn: 45,
+        minLevel: 6,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Airbus+A350-1000'
     },
     A388: {
@@ -145,6 +155,7 @@ export const AIRCRAFT_TYPES = {
         seats: 520,
         runway: 3000,
         fuelBurn: 65,
+        minLevel: 7,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Airbus+A380-800'
     },
     B763: {
@@ -158,6 +169,7 @@ export const AIRCRAFT_TYPES = {
         seats: 260,
         runway: 2500,
         fuelBurn: 35,
+        minLevel: 5,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Boeing+767-300ER'
     },
 
@@ -173,6 +185,7 @@ export const AIRCRAFT_TYPES = {
         seats: 140,
         runway: 1800,
         fuelBurn: 22,
+        minLevel: 2,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Airbus+A319'
     },
     A320: {
@@ -186,6 +199,7 @@ export const AIRCRAFT_TYPES = {
         seats: 180,
         runway: 1900,
         fuelBurn: 24,
+        minLevel: 1,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Airbus+A320-200'
     },
     A20N: {
@@ -199,6 +213,7 @@ export const AIRCRAFT_TYPES = {
         seats: 186,
         runway: 1900,
         fuelBurn: 22,
+        minLevel: 3,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Airbus+A320neo'
     },
     A321: {
@@ -212,6 +227,7 @@ export const AIRCRAFT_TYPES = {
         seats: 210,
         runway: 2100,
         fuelBurn: 26,
+        minLevel: 2,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Airbus+A321-200'
     },
     A21N: {
@@ -225,6 +241,7 @@ export const AIRCRAFT_TYPES = {
         seats: 220,
         runway: 2100,
         fuelBurn: 26,
+        minLevel: 4,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Airbus+A321neo'
     },
     B738: {
@@ -238,6 +255,7 @@ export const AIRCRAFT_TYPES = {
         seats: 180,
         runway: 2000,
         fuelBurn: 23,
+        minLevel: 1,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Boeing+737-800'
     },
     B73H: {
@@ -251,6 +269,7 @@ export const AIRCRAFT_TYPES = {
         seats: 189,
         runway: 2000,
         fuelBurn: 24,
+        minLevel: 2,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Boeing+737-800+HD'
     },
     B38M: {
@@ -264,6 +283,7 @@ export const AIRCRAFT_TYPES = {
         seats: 189,
         runway: 2100,
         fuelBurn: 22,
+        minLevel: 3,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Boeing+737+MAX+8'
     },
     B39M: {
@@ -277,6 +297,7 @@ export const AIRCRAFT_TYPES = {
         seats: 204,
         runway: 2200,
         fuelBurn: 23,
+        minLevel: 4,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Boeing+737+MAX+9'
     },
     B752: {
@@ -290,6 +311,7 @@ export const AIRCRAFT_TYPES = {
         seats: 200,
         runway: 2300,
         fuelBurn: 30,
+        minLevel: 2,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Boeing+757-200'
     },
 
@@ -305,6 +327,7 @@ export const AIRCRAFT_TYPES = {
         seats: 120,
         runway: 1800,
         fuelBurn: 18,
+        minLevel: 9,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Airbus+A220-100'
     },
     A223: {
@@ -318,6 +341,7 @@ export const AIRCRAFT_TYPES = {
         seats: 145,
         runway: 1850,
         fuelBurn: 19,
+        minLevel: 10,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Airbus+A220-300'
     },
 
@@ -333,6 +357,7 @@ export const AIRCRAFT_TYPES = {
         seats: 70,
         runway: 1700,
         fuelBurn: 13,
+        minLevel: 1,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Embraer+E170'
     },
     E175: {
@@ -346,6 +371,7 @@ export const AIRCRAFT_TYPES = {
         seats: 76,
         runway: 1700,
         fuelBurn: 14,
+        minLevel: 2,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Embraer+E175'
     },
     E190: {
@@ -359,6 +385,7 @@ export const AIRCRAFT_TYPES = {
         seats: 100,
         runway: 1800,
         fuelBurn: 15,
+        minLevel: 2,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Embraer+E190'
     },
     E195: {
@@ -372,6 +399,7 @@ export const AIRCRAFT_TYPES = {
         seats: 120,
         runway: 1850,
         fuelBurn: 16,
+        minLevel: 3,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Embraer+E195'
     },
     E195E2: {
@@ -385,6 +413,7 @@ export const AIRCRAFT_TYPES = {
         seats: 132,
         runway: 1900,
         fuelBurn: 15,
+        minLevel: 4,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Embraer+E195-E2'
     },
     CRJ7: {
@@ -398,6 +427,7 @@ export const AIRCRAFT_TYPES = {
         seats: 70,
         runway: 1700,
         fuelBurn: 12,
+        minLevel: 3,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=CRJ700'
     },
     CRJ9: {
@@ -411,6 +441,7 @@ export const AIRCRAFT_TYPES = {
         seats: 90,
         runway: 1750,
         fuelBurn: 13,
+        minLevel: 4,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=CRJ900'
     },
 
@@ -426,6 +457,7 @@ export const AIRCRAFT_TYPES = {
         seats: 48,
         runway: 1200,
         fuelBurn: 8,
+        minLevel: 4,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=ATR+42-600'
     },
     ATR72: {
@@ -439,6 +471,7 @@ export const AIRCRAFT_TYPES = {
         seats: 72,
         runway: 1350,
         fuelBurn: 9,
+        minLevel: 2,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=ATR+72-600'
     },
     DH8D: {
@@ -452,6 +485,7 @@ export const AIRCRAFT_TYPES = {
         seats: 78,
         runway: 1400,
         fuelBurn: 10,
+        minLevel: 3,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Dash+8+Q400'
     },
     C208: {
@@ -465,6 +499,7 @@ export const AIRCRAFT_TYPES = {
         seats: 9,
         runway: 800,
         fuelBurn: 3,
+        minLevel: 3,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Cessna+208'
     },
 
@@ -480,6 +515,7 @@ export const AIRCRAFT_TYPES = {
         seats: 0,
         runway: 2100,
         fuelBurn: 22,
+        minLevel: 8,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Boeing+737-800F'
     },
     B763F: {
@@ -493,6 +529,7 @@ export const AIRCRAFT_TYPES = {
         seats: 2,
         runway: 2500,
         fuelBurn: 40,
+        minLevel: 9,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Boeing+767-300F'
     },
     B77F: {
@@ -506,6 +543,7 @@ export const AIRCRAFT_TYPES = {
         seats: 2,
         runway: 2700,
         fuelBurn: 48,
+        minLevel: 9,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Boeing+777F'
     },
     A332F: {
@@ -519,6 +557,7 @@ export const AIRCRAFT_TYPES = {
         seats: 2,
         runway: 2600,
         fuelBurn: 38,
+        minLevel: 10,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Airbus+A330-200F'
     },
     B744F: {
@@ -532,6 +571,7 @@ export const AIRCRAFT_TYPES = {
         seats: 4,
         runway: 3300,
         fuelBurn: 55,
+        minLevel: 10,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Boeing+747-400F'
     },
     AN124: {
@@ -545,6 +585,7 @@ export const AIRCRAFT_TYPES = {
         seats: 6,
         runway: 3200,
         fuelBurn: 70,
+        minLevel: 10,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Antonov+An-124'
     },
 
@@ -560,6 +601,7 @@ export const AIRCRAFT_TYPES = {
         seats: 9,
         runway: 1100,
         fuelBurn: 5,
+        minLevel: 5,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=King+Air+360'
     },
     PHE100: {
@@ -573,6 +615,7 @@ export const AIRCRAFT_TYPES = {
         seats: 5,
         runway: 950,
         fuelBurn: 3,
+        minLevel: 6,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Phenom+100'
     },
     PHE300: {
@@ -586,6 +629,7 @@ export const AIRCRAFT_TYPES = {
         seats: 9,
         runway: 950,
         fuelBurn: 4,
+        minLevel: 7,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Phenom+300E'
     },
     CJ3: {
@@ -599,6 +643,7 @@ export const AIRCRAFT_TYPES = {
         seats: 7,
         runway: 1000,
         fuelBurn: 4,
+        minLevel: 8,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Citation+CJ3'
     },
     LATD: {
@@ -612,6 +657,7 @@ export const AIRCRAFT_TYPES = {
         seats: 9,
         runway: 1500,
         fuelBurn: 6,
+        minLevel: 5,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Citation+Latitude'
     },
     F7X: {
@@ -625,6 +671,7 @@ export const AIRCRAFT_TYPES = {
         seats: 16,
         runway: 1800,
         fuelBurn: 9,
+        minLevel: 6,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Falcon+7X'
     },
     F8X: {
@@ -638,6 +685,7 @@ export const AIRCRAFT_TYPES = {
         seats: 16,
         runway: 1800,
         fuelBurn: 9,
+        minLevel: 7,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Falcon+8X'
     },
     G550: {
@@ -651,6 +699,7 @@ export const AIRCRAFT_TYPES = {
         seats: 18,
         runway: 1800,
         fuelBurn: 10,
+        minLevel: 8,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Gulfstream+G550'
     },
     G7500: {
@@ -664,6 +713,7 @@ export const AIRCRAFT_TYPES = {
         seats: 19,
         runway: 1900,
         fuelBurn: 11,
+        minLevel: 9,
         image: 'https://placehold.co/600x400/1e293b/FFF?text=Global+7500'
     }
 };

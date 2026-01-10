@@ -97,6 +97,19 @@ export class FuelProviders {
     }
 
     getUnlockedProviders(level) {
+        // Usar el nuevo sistema de niveles si está disponible
+        if (this.game && this.game.levelSystem) {
+            const providers = this.game.levelSystem.getUnlockedFuelProviders();
+            return providers ? providers.length : 1;
+        }
+        
+        // Fallback a la lógica basada en LEVEL_CONFIG
+        if (!level) level = this.game?.state?.level || 1;
+        
+        // Según LEVEL_CONFIG:
+        // Nivel 1-2: 1 proveedor (shell)
+        // Nivel 3-4: 2 proveedores (shell, bp)
+        // Nivel 5+: 3 proveedores (shell, bp, totalenergies)
         if (level <= 2) return 1;
         if (level <= 4) return 2;
         return 3;
@@ -115,6 +128,17 @@ export class FuelProviders {
         const inCrisis = fuel.inCrisis || false;
         const marketState = fuel.marketState || 'ESTABLE';
 
+        // Obtener perfiles desbloqueados según nivel (FASE 5 - Integración LevelSystem)
+        let unlockedProfiles = ['estable']; // Por defecto solo 'estable'
+        if (this.game && this.game.levelSystem) {
+            unlockedProfiles = this.game.levelSystem.getUnlockedFuelProfiles();
+        } else {
+            // Fallback según nivel
+            if (!level) level = this.game?.state?.level || 1;
+            if (level >= 3) unlockedProfiles.push('flexible');
+            if (level >= 5) unlockedProfiles.push('agresivo');
+        }
+
         const unlockedCount = this.getUnlockedProviders(level);
         const activeProviders = state.providers.slice(0, unlockedCount);
 
@@ -126,7 +150,14 @@ export class FuelProviders {
 
         activeProviders.forEach(providerState => {
             const provider = this.providers.find(p => p.id === providerState.id);
-            const profileKey = providerState.currentProfile;
+            let profileKey = providerState.currentProfile;
+            
+            // Si el perfil actual no está desbloqueado, usar el primero disponible
+            if (!unlockedProfiles.includes(profileKey)) {
+                profileKey = unlockedProfiles[0] || 'estable';
+                providerState.currentProfile = profileKey; // Actualizar estado
+            }
+            
             const profile = this.profiles[profileKey];
 
             // Calcular precio base con multiplicador de perfil
@@ -219,6 +250,16 @@ export class FuelProviders {
         const now = this.game.state.date;
         const marketState = this.game.state.fuel.marketState;
         const inCrisis = this.game.state.fuel.inCrisis;
+        const level = this.game.state.level || 1;
+
+        // Obtener perfiles desbloqueados según nivel (FASE 5)
+        let unlockedProfiles = ['estable'];
+        if (this.game && this.game.levelSystem) {
+            unlockedProfiles = this.game.levelSystem.getUnlockedFuelProfiles();
+        } else {
+            if (level >= 3) unlockedProfiles.push('flexible');
+            if (level >= 5) unlockedProfiles.push('agresivo');
+        }
 
         let rotated = false;
 
@@ -226,20 +267,23 @@ export class FuelProviders {
             if (now >= provider.nextRotation) {
                 const oldProfile = provider.currentProfile;
                 
-                // Elegir nuevo perfil (evitar repetir el mismo)
+                // Elegir nuevo perfil SOLO de los desbloqueados (evitar repetir el mismo)
+                let availableProfiles = unlockedProfiles.filter(p => p !== oldProfile);
+                if (availableProfiles.length === 0) {
+                    availableProfiles = unlockedProfiles; // Si solo hay uno, usar ese
+                }
+                
                 let newProfile;
-                const profiles = Object.keys(this.profiles);
-                const availableProfiles = profiles.filter(p => p !== oldProfile);
-
-                // Influencias del mercado en la probabilidad de perfiles
-                if (inCrisis) {
+                
+                // Influencias del mercado en la probabilidad de perfiles (solo si están desbloqueados)
+                if (inCrisis && unlockedProfiles.includes('estable')) {
                     // En crisis, más probable que ofrezcan "estable"
                     newProfile = Math.random() < 0.5 ? 'estable' : availableProfiles[Math.floor(Math.random() * availableProfiles.length)];
-                } else if (marketState === 'BAJISTA') {
-                    // Mercado bajista, más ofertas "agresivas"
+                } else if (marketState === 'BAJISTA' && unlockedProfiles.includes('agresivo')) {
+                    // Mercado bajista, más ofertas "agresivas" (solo si está desbloqueado)
                     newProfile = Math.random() < 0.4 ? 'agresivo' : availableProfiles[Math.floor(Math.random() * availableProfiles.length)];
                 } else {
-                    // Random normal
+                    // Random normal solo de perfiles desbloqueados
                     newProfile = availableProfiles[Math.floor(Math.random() * availableProfiles.length)];
                 }
 
@@ -262,7 +306,6 @@ export class FuelProviders {
 
         if (rotated) {
             // Regenerar ofertas cuando hay rotación
-            const level = this.game.state.level || 1;
             this.generateOffers(level);
             this.game.save();
         }

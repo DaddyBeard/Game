@@ -10,6 +10,8 @@ import { CompetitorManager } from '../managers/competitorManager.js';
 import { AIRPORTS, Airport } from '../models/airport.js';
 import { DB } from './db.js';
 import { LEVEL_REQUIREMENTS } from '../models/progressionModel.js';
+import { LevelSystem, getStartingMoney } from '../models/levelSystem.js';
+import { getRegionByAirport } from '../models/regionsData.js';
 
 export class GameManager {
     constructor() {
@@ -25,6 +27,8 @@ export class GameManager {
             isPaused: false,
             lastEconomy: { gross: 0, costs: 0, net: 0 },
             mainHub: null, // Hub principal seleccionado
+            mainHubCategory: null, // Categoría del hub principal (para cálculos de alcance)
+            mainHubRegion: null, // Región del hub principal (para expansión regional)
             hubs: {}, // {hubId: {id, name, slots, dailyFee, level, ...}}
             cumulativeProfit: 0, // Suma de beneficios netos (nunca baja)
             levelUpNotifications: [],
@@ -55,6 +59,9 @@ export class GameManager {
             routes: new RouteManager(this),
             competitors: new CompetitorManager(this)
         };
+        
+        // Sistema de niveles y progresión
+        this.levelSystem = new LevelSystem(this);
 
         this.lastTick = 0;
         
@@ -96,9 +103,28 @@ export class GameManager {
     }
 
     checkLevelUp() {
+        // Usar el nuevo sistema de niveles si está disponible
+        if (this.levelSystem) {
+            const check = this.levelSystem.canLevelUp();
+            if (check.can) {
+                const result = this.levelSystem.levelUp();
+                if (result.success) {
+                    this.state.levelUpNotifications.push({
+                        level: result.newLevel,
+                        unlocks: result.newUnlocks,
+                        timestamp: this.state.date
+                    });
+                    console.log(`🎉 Level Up! ${result.oldLevel} → ${result.newLevel}`);
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        // Fallback al sistema antiguo (compatibilidad)
         const currentLevel = this.state.level;
         const nextReq = LEVEL_REQUIREMENTS[currentLevel + 1];
-        if (!nextReq) return; // Max level reached or undefined
+        if (!nextReq) return false; // Max level reached or undefined
 
         const fleetCount = this.managers.fleet.ownedPlanes.length;
         const routesCount = this.managers.routes.getRoutes().length;
@@ -130,6 +156,7 @@ export class GameManager {
         this.state.date = new Date(2025, 0, 1).getTime();
         this.state.lastEconomy = { gross: 0, costs: 0, net: 0 };
         this.state.mainHub = null;
+        this.state.mainHubCategory = null;
         this.state.hubs = {};
         this.state.cumulativeProfit = 0;
         this.state.companyName = "SkyStart Airlines"; // Resetear nombre por defecto
@@ -158,6 +185,9 @@ export class GameManager {
 
         // Reset state with validated parameters
         this.state.mainHub = selectedHubId;
+        this.state.mainHubCategory = airport.category || 'Secondary Hub'; // Guardar categoría del hub para cálculos de alcance
+        this.state.mainHubRegion = getRegionByAirport(selectedHubId)?.id || null; // Guardar región del hub para expansión regional
+        
         // No sobrescribir el nombre si ya fue establecido por el usuario
         if (!this.state.companyName) {
             this.state.companyName = "SkyStart Airlines"; // Default si no se estableció
@@ -173,8 +203,9 @@ export class GameManager {
         // Asegurar que el TimeManager no esté pausado
         this.managers.time.isPaused = false;
 
-        // DEV: Set money to 999M for testing
-        this.state.money = 999999999;
+        // Usar getStartingMoney() según categoría del hub según LEVEL_SYSTEM
+        const hubCategory = this.state.mainHubCategory || 'Secondary Hub';
+        this.state.money = getStartingMoney(hubCategory);
 
         // Initialize main hub with validated parameters
         const hubBaseFee = this.getHubDailyFee(selectedHubId);
@@ -376,6 +407,20 @@ export class GameManager {
             this.state.fuelContracts = this.state.fuelContracts || [];
             this.state.corporateContracts = this.state.corporateContracts || [];
             this.state.loans = this.state.loans || [];
+
+            // Restaurar mainHubCategory y mainHubRegion para partidas antiguas
+            if (this.state.mainHub && !this.state.mainHubCategory) {
+                const hubAirport = AIRPORTS[this.state.mainHub];
+                if (hubAirport) {
+                    this.state.mainHubCategory = hubAirport.category || 'Secondary Hub';
+                    this.state.mainHubRegion = getRegionByAirport(this.state.mainHub)?.id || null;
+                    console.log('✅ Restored hub info for legacy save:', {
+                        mainHub: this.state.mainHub,
+                        category: this.state.mainHubCategory,
+                        region: this.state.mainHubRegion
+                    });
+                }
+            }
 
             // CRITICAL: Validate and fix date format
             // If date is not a valid timestamp, reset it
