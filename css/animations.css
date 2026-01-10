@@ -1,3 +1,12 @@
+/* Subtle fade-up animation for cards and modals */
+.fade-in-up {
+    animation: fadeInUp 300ms ease-out both;
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 /* Existing Animations */
 @keyframes slideUp {
     from {
@@ -126,5 +135,18 @@
 
     50% {
         filter: drop-shadow(0 0 15px var(--primary-glow));
+    }
+}
+
+/* Tip Notification Slide In */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(400px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
     }
 }

@@ -126,6 +126,17 @@ export class FleetManager {
             } else if (plane.status === "MAINT") {
                 this.checkMaintenanceProgress(plane);
             }
+
+            // Track days since last maintenance for aging system
+            if (!plane.daysSinceLastMaint) {
+                plane.daysSinceLastMaint = 0;
+            }
+            plane.daysSinceLastMaint++;
+
+            // Alert if maintenance is overdue (every 100+ days without maintenance)
+            if (plane.daysSinceLastMaint > 100 && plane.daysSinceLastMaint % 10 === 0) {
+                console.log(`⚠️  ${plane.registration}: Maintenance overdue (${plane.daysSinceLastMaint} days). Costs rising!`);
+            }
         });
     }
 
@@ -176,8 +187,11 @@ export class FleetManager {
             plane.condition = 100;
         }
 
+        // Reset maintenance counter
+        plane.daysSinceLastMaint = 0;
+
         delete plane.maintType;
         // Notify?
-        console.log(`Maintenance finished for ${plane.registration}`);
+        console.log(`✈️  Maintenance finished for ${plane.registration}`);
     }
 }

@@ -14,6 +14,7 @@ class App {
     constructor() {
         this.game = new GameManager();
         this.ui = new UIManager(this.game);
+        this.hudUpdateInterval = null; // Para limpiar el intervalo más tarde
     }
 
     async init() {
@@ -44,13 +45,56 @@ class App {
         if (hasSave) {
             await this.game.loadGame();
         } else {
-            // Show hub selection (will be handled in UI.init())
-           console.log("🆕 New Game Sequence Ready");
+            // New game: initialize state and show setup screen
+            console.log("🆕 New Game Sequence Starting");
+            await this.game.newGame();
         }
 
         // 4. Start Loops
+        // Asegurar que el tiempo no esté pausado antes de iniciar el loop
+        this.game.managers.time.isPaused = false;
         this.game.startLoop();
         this.ui.init();
+        
+        // Iniciar actualización periódica del HUD
+        // Nota: Este intervalo se limpia automáticamente al recargar la página
+        // En una implementación más robusta, se podría limpiar en un método destroy()
+        this.hudUpdateInterval = setInterval(() => {
+            if (this.game.state.mainHub && this.ui) {
+                this.ui.updateHUD();
+            }
+        }, 100); // Actualizar cada 100ms para mostrar cambios suaves
+        
+        // 5. If no mainHub selected, show setup screen
+        if (!this.game.state.mainHub) {
+            console.log("🎮 Showing setup screen (no mainHub)");
+            this.ui.showSetupScreen();
+        } else {
+            // Si ya hay un hub, asegurar que el tiempo no esté pausado
+            if (this.game.managers.time.isPaused) {
+                this.game.managers.time.togglePause();
+            }
+        }
+
+        // 6. Generate initial contract offers if needed (only in debug mode)
+        const DEBUG_MODE = window.location.hostname === 'localhost';
+        if (DEBUG_MODE && this.game.managers.economy) {
+            console.log('🔍 [DEBUG] Forcing contract offer generation...');
+            // Reset generation flag to force new offers
+            this.game.state.lastContractOfferGeneration = null;
+            this.game.state.corporateContractOffers = [];
+            
+            const offers = this.game.managers.economy.generateContractOffers();
+            console.log('📩 [DEBUG] Generated offers:', offers);
+            
+            // Save to persist offers
+            this.game.save();
+            
+            // Force UI update (usar setTimeout del UIManager para tracking)
+            if (this.ui.renderEconomy) {
+                this.ui.setTimeout(() => this.ui.renderEconomy(), 100);
+            }
+        }
         
         // Remove loading screen if we had one
         document.body.classList.add('loaded');

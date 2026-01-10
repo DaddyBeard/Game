@@ -5,7 +5,7 @@ export const LEVEL_REQUIREMENTS = {
     fleetSize: 1,
     activeRoutes: 1,
     cumulativeProfit: 0,
-    unlocksAircraft: ['A320', 'A330'],
+    unlocksAircraft: ['A320', 'B738', 'E170'],
     unlocksHub: false
   },
   2: {
@@ -14,7 +14,7 @@ export const LEVEL_REQUIREMENTS = {
     fleetSize: 2,
     activeRoutes: 2,
     cumulativeProfit: 1000000,
-    unlocksAircraft: ['A340', 'B777'],
+    unlocksAircraft: ['A321', 'B752', 'E175', 'E190', 'ATR72'],
     unlocksHub: false
   },
   3: {
@@ -23,7 +23,7 @@ export const LEVEL_REQUIREMENTS = {
     fleetSize: 4,
     activeRoutes: 4,
     cumulativeProfit: 10000000,
-    unlocksAircraft: ['B787', 'A350'],
+    unlocksAircraft: ['A20N', 'B38M', 'CRJ7', 'DH8D', 'E195', 'C208'],
     unlocksHub: false
   },
   4: {
@@ -32,7 +32,7 @@ export const LEVEL_REQUIREMENTS = {
     fleetSize: 6,
     activeRoutes: 6,
     cumulativeProfit: 50000000,
-    unlocksAircraft: ['B777', 'A380'],
+    unlocksAircraft: ['A21N', 'B39M', 'B788', 'CRJ9', 'E195E2', 'AT45'],
     unlocksHub: true
   },
   5: {
@@ -41,7 +41,7 @@ export const LEVEL_REQUIREMENTS = {
     fleetSize: 8,
     activeRoutes: 8,
     cumulativeProfit: 100000000,
-    unlocksAircraft: ['A380'],
+    unlocksAircraft: ['A359', 'B77W', 'B763', 'LATD', 'KNG360'],
     unlocksHub: true
   },
   6: {
@@ -50,7 +50,7 @@ export const LEVEL_REQUIREMENTS = {
     fleetSize: 10,
     activeRoutes: 10,
     cumulativeProfit: 200000000,
-    unlocksAircraft: [],
+    unlocksAircraft: ['B789', 'A35K', 'B772', 'F7X', 'PHE100'],
     unlocksHub: true
   },
   7: {
@@ -59,7 +59,7 @@ export const LEVEL_REQUIREMENTS = {
     fleetSize: 12,
     activeRoutes: 10,
     cumulativeProfit: 300000000,
-    unlocksAircraft: [],
+    unlocksAircraft: ['A388', 'B78X', 'B744', 'F8X', 'PHE300'],
     unlocksHub: true
   },
   8: {
@@ -68,7 +68,7 @@ export const LEVEL_REQUIREMENTS = {
     fleetSize: 14,
     activeRoutes: 12,
     cumulativeProfit: 500000000,
-    unlocksAircraft: [],
+    unlocksAircraft: ['A332', 'A333', 'B738F', 'G550', 'CJ3'],
     unlocksHub: true
   },
   9: {
@@ -77,7 +77,7 @@ export const LEVEL_REQUIREMENTS = {
     fleetSize: 15,
     activeRoutes: 12,
     cumulativeProfit: 700000000,
-    unlocksAircraft: [],
+    unlocksAircraft: ['B763F', 'B77F', 'A221', 'G7500'],
     unlocksHub: true
   },
   10: {
@@ -86,7 +86,7 @@ export const LEVEL_REQUIREMENTS = {
     fleetSize: 15,
     activeRoutes: 12,
     cumulativeProfit: 1000000000,
-    unlocksAircraft: [],
+    unlocksAircraft: ['A332F', 'B744F', 'AN124', 'A223'],
     unlocksHub: true
   }
 };

@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vista Previa - Ficha de Aeronave Rediseñada</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/ui.css">
+    <link rel="stylesheet" href="css/aircraft-details.css">
+    <style>
+        body {
+            padding: 20px;
+            background: #0f172a;
+        }
+        .demo-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: #1e293b;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .demo-header {
+            background: linear-gradient(135deg, #4a5f7f 0%, #3e5c7d 100%);
+            padding: 20px;
+            color: white;
+            text-align: center;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-header">
+        <h1>🎨 Vista Previa: Ficha de Aeronave Estilo "Rutas"</h1>
+        <p style="opacity: 0.8; margin: 10px 0 0 0;">Diseño inspirado en la captura proporcionada</p>
+    </div>
+
+    <div class="demo-container">
+        <div class="aircraft-details-modal">
+            <!-- Header con Tabs estilo Rutas -->
+            <div class="aircraft-modal-header">
+                <div class="aircraft-modal-tabs">
+                    <button class="aircraft-tab-btn active" data-tab="overview">
+                        <span class="tab-icon">📊</span>RESUMEN
+                    </button>
+                    <button class="aircraft-tab-btn" data-tab="performance">
+                        <span class="tab-icon">💰</span>RENDIMIENTO
+                    </button>
+                    <button class="aircraft-tab-btn" data-tab="maintenance">
+                        <span class="tab-icon">🛠️</span>MANTENIMIENTO
+                    </button>
+                    <button class="aircraft-tab-btn" data-tab="route">
+                        <span class="tab-icon">🗺️</span>RUTA
+                    </button>
+                </div>
+            </div>
+
+            <!-- Hero: Imagen del avión con badge de estado -->
+            <div class="aircraft-hero">
+                <img src="assets/planes/a320.png" alt="A320-200" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22200%22%3E%3Crect fill=%22%232c3e50%22 width=%22400%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2224%22%3EA320-200%3C/text%3E%3C/svg%3E'">
+                <div class="aircraft-status-badge idle">
+                    <div class="status-icon"></div>
+                    ✈️ En Tierra
+                </div>
+                <div class="aircraft-registration">EC-ABC</div>
+            </div>
+
+            <!-- Info Header -->
+            <div class="aircraft-info-header">
+                <h2 class="aircraft-name">Airbus A320-200</h2>
+                <p class="aircraft-subtitle">Airbus • Narrow-Body</p>
+            </div>
+
+            <!-- Tab: RESUMEN -->
+            <div class="tab-content active" data-content="overview">
+                <div class="aircraft-content">
+                    <!-- Columna Izquierda -->
+                    <div class="aircraft-column">
+                        <div class="column-section">
+                            <div class="section-header">Aeronave</div>
+                            <div class="spec-row">
+                                <span class="spec-label">Modelo</span>
+                                <span class="spec-value highlight">A320-200</span>
+                            </div>
+                            <div class="spec-row">
+                                <span class="spec-label">Fabricante</span>
+                                <span class="spec-value">Airbus</span>
+                            </div>
+                            <div class="spec-row">
+                                <span class="spec-label">Categoría</span>
+                                <span class="spec-value">Narrow-Body</span>
+                            </div>
+                        </div>
+
+                        <div class="column-section">
+                            <div class="section-header">Especificaciones</div>
+                            <div class="spec-row">
+                                <span class="spec-label">Alcance</span>
+                                <span class="spec-value highlight">5,700 km</span>
+                            </div>
+                            <div class="spec-row">
+                                <span class="spec-label">Velocidad</span>
+                                <span class="spec-value">840 km/h</span>
+                            </div>
+                            <div class="spec-row">
+                                <span class="spec-label">Pista mín.</span>
+                                <span class="spec-value">6,500 m</span>
+                            </div>
+                            <div class="spec-row">
+                                <span class="spec-label">Consumo</span>
+                                <span class="spec-value">2.5 kg/km</span>
+                            </div>
+                        </div>
+
+                        <div class="column-section">
+                            <div class="section-header">Tipo</div>
+                            <div class="spec-row">
+                                <span class="spec-value" style="width: 100%; text-align: center; font-size: 1.5rem;">
+                                    👤 Pasajeros
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Columna Derecha -->
+                    <div class="aircraft-column">
+                        <div class="column-section">
+                            <div class="section-header">Horas de vuelo/Cycles</div>
+                            <div class="spec-row">
+                                <span class="spec-label">Horas voladas</span>
+                                <span class="spec-value success">244 h / 3</span>
+                            </div>
+                        </div>
+
+                        <div class="column-section">
+                            <div class="section-header">Entregado</div>
+                            <div class="spec-row">
+                                <span class="spec-label">Hace</span>
+                                <span class="spec-value">15 días</span>
+                            </div>
+                        </div>
+
+                        <div class="column-section">
+                            <div class="section-header">Tiempo revisión</div>
+                            <div class="spec-row">
+                                <span class="spec-label">Próximo Check</span>
+                                <span class="spec-value warning">--</span>
+                            </div>
+                        </div>
+
+                        <div class="column-section">
+                            <div class="section-header">Deterioro</div>
+                            <div class="spec-row">
+                                <span class="spec-label">Condición</span>
+                                <span class="spec-value warning">97.17%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección Colapsable: Disposición de Asientos -->
+                <div class="collapsible-section expanded">
+                    <div class="collapsible-header">
+                        <div class="collapsible-title">
+                            <span>💺</span>
+                            DISPOSICIÓN DE ASIENTOS
+                        </div>
+                        <div class="collapsible-chevron">▼</div>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="collapsible-body">
+                            <div class="seats-visual">
+                                <div class="seat-class">
+                                    <div class="seat-icon-container">
+                                        <span class="seat-icon economy">💺</span>
+                                        <span class="seat-icon economy">💺</span>
+                                        <span class="seat-icon economy">💺</span>
+                                        <span class="seat-icon economy">💺</span>
+                                        <span class="seat-icon economy">💺</span>
+                                        <span class="seat-icon economy">💺</span>
+                                        <span class="seat-icon economy">💺</span>
+                                        <span class="seat-icon economy">💺</span>
+                                        <span class="seat-icon economy">💺</span>
+                                        <span class="seat-icon economy">💺</span>
+                                    </div>
+                                    <div class="seat-count">172</div>
+                                    <div class="seat-fraction">/186</div>
+                                    <div class="seat-label">Turista</div>
+                                </div>
+                                <div class="seat-class">
+                                    <div class="seat-icon-container">
+                                        <span class="seat-icon premium">💺</span>
+                                        <span class="seat-icon premium">💺</span>
+                                        <span class="seat-icon premium">💺</span>
+                                    </div>
+                                    <div class="seat-count">12</div>
+                                    <div class="seat-fraction">/93</div>
+                                    <div class="seat-label">Premium</div>
+                                </div>
+                                <div class="seat-class">
+                                    <div class="seat-icon-container">
+                                        <span class="seat-icon business">💺</span>
+                                        <span class="seat-icon business">💺</span>
+                                    </div>
+                                    <div class="seat-count">2</div>
+                                    <div class="seat-fraction">/62</div>
+                                    <div class="seat-label">Business</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Datos Técnicos -->
+                <div class="collapsible-section">
+                    <div class="collapsible-header">
+                        <div class="collapsible-title">
+                            <span>📊</span>
+                            RENDIMIENTO ECONÓMICO
+                        </div>
+                        <div class="collapsible-chevron">▼</div>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="collapsible-body">
+                            <div class="spec-row">
+                                <span class="spec-label">Ruta Actual</span>
+                                <span class="spec-value highlight">LMML → LEZL</span>
+                            </div>
+                            <div class="spec-row">
+                                <span class="spec-label">Distancia</span>
+                                <span class="spec-value">2,489 km</span>
+                            </div>
+                            <div class="spec-row">
+                                <span class="spec-label">Ingresos/día</span>
+                                <span class="spec-value success">$63,900</span>
+                            </div>
+                            <div class="spec-row">
+                                <span class="spec-label">Gastos/día</span>
+                                <span class="spec-value danger">-$38,500</span>
+                            </div>
+                            <div class="spec-row" style="border-top: 2px solid rgba(255,255,255,0.2); padding-top: 12px; margin-top: 8px;">
+                                <span class="spec-label" style="font-weight: bold;">Beneficio/día</span>
+                                <span class="spec-value success" style="font-size: 1.2rem;">+$25,400</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: RENDIMIENTO -->
+            <div class="tab-content" data-content="performance">
+                <div style="padding: 24px;">
+                    <!-- Rendimiento Diario -->
+                    <div class="collapsible-section expanded">
+                        <div class="collapsible-header">
+                            <div class="collapsible-title">
+                                <span>📊</span>
+                                RENDIMIENTO DIARIO
+                            </div>
+                            <div class="collapsible-chevron">▼</div>
+                        </div>
+                        <div class="collapsible-content">
+                            <div class="collapsible-body">
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 16px;">
+                                    <div style="background: rgba(74, 222, 128, 0.1); border-left: 4px solid #4ade80; padding: 16px; border-radius: 8px;">
+                                        <div style="font-size: 0.75rem; color: #8e98a8; margin-bottom: 6px; text-transform: uppercase;">Ingresos/día</div>
+                                        <div style="font-size: 1.5rem; font-weight: bold; color: #4ade80;">$63,900</div>
+                                    </div>
+                                    <div style="background: rgba(239, 68, 68, 0.1); border-left: 4px solid #ef4444; padding: 16px; border-radius: 8px;">
+                                        <div style="font-size: 0.75rem; color: #8e98a8; margin-bottom: 6px; text-transform: uppercase;">Gastos/día</div>
+                                        <div style="font-size: 1.5rem; font-weight: bold; color: #ef4444;">-$38,500</div>
+                                    </div>
+                                    <div style="background: rgba(0, 196, 140, 0.1); border-left: 4px solid #00c48c; padding: 16px; border-radius: 8px;">
+                                        <div style="font-size: 0.75rem; color: #8e98a8; margin-bottom: 6px; text-transform: uppercase;">Beneficio/día</div>
+                                        <div style="font-size: 1.5rem; font-weight: bold; color: #00c48c;">+$25,400</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="perf-stats-grid" style="margin-top: 20px;">\n                        <div class="perf-stat-card revenue">
+                        <div class="perf-stat-card revenue">
+                            <div class="perf-stat-label">Ingresos Totales</div>
+                            <div class="perf-stat-value">$1,215,000</div>
+                        </div>
+                        <div class="perf-stat-card passengers">
+                            <div class="perf-stat-label">Pasajeros Totales</div>
+                            <div class="perf-stat-value">8,450</div>
+                        </div>
+                        <div class="perf-stat-card hours">
+                            <div class="perf-stat-label">Horas Voladas</div>
+                            <div class="perf-stat-value">244 h</div>
+                        </div>
+                        <div class="perf-stat-card age">
+                            <div class="perf-stat-label">Antigüedad</div>
+                            <div class="perf-stat-value">15.2 d</div>
+                        </div>
+                    </div>
+
+                    <!-- Historial de Vuelos -->
+                    <div class="collapsible-section expanded">
+                        <div class="collapsible-header">
+                            <div class="collapsible-title">
+                                <span>🛫</span>
+                                HISTORIAL DE VUELOS
+                            </div>
+                            <div class="collapsible-chevron">▼</div>
+                        </div>
+                        <div class="collapsible-content">
+                            <div class="collapsible-body">
+                                <table class="flight-history-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Código</th>
+                                            <th>Ruta</th>
+                                            <th>Fecha</th>
+                                            <th>Pax</th>
+                                            <th>Ingresos</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="flight-code">ME-0001</td>
+                                            <td class="flight-route">LMML-LEZL</td>
+                                            <td class="flight-date">47 secs ago</td>
+                                            <td class="flight-pax">186</td>
+                                            <td class="flight-revenue">$63,900</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="flight-code">ME-0002</td>
+                                            <td class="flight-route">LEZL-LMML</td>
+                                            <td class="flight-date">3 mins ago</td>
+                                            <td class="flight-pax">180</td>
+                                            <td class="flight-revenue">$61,200</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: MANTENIMIENTO -->
+            <div class="tab-content" data-content="maintenance">
+                <div style="padding: 24px;">
+                    <div class="maint-options" style="display: flex; gap: 15px; margin-top: 10px;">
+                        <div class="maint-card" style="flex: 1; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; border: 1px solid #334155;">
+                            <h4 style="margin: 0 0 10px 0; color: #3b82f6;">Check A</h4>
+                            <p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 10px;">Mantenimiento rápido</p>
+                            <ul style="font-size: 0.8rem; color: #cbd5e1; margin-bottom: 15px; padding-left: 20px;">
+                                <li>Duración: 1 día</li>
+                                <li>Restaura: +20%</li>
+                                <li>Costo: $10,000</li>
+                            </ul>
+                            <button class="modal-btn btn-primary" style="width: 100%; padding: 12px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
+                                Realizar Check A
+                            </button>
+                        </div>
+                        
+                        <div class="maint-card" style="flex: 1; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; border: 1px solid #334155;">
+                            <h4 style="margin: 0 0 10px 0; color: #8b5cf6;">Check B</h4>
+                            <p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 10px;">Mantenimiento completo</p>
+                            <ul style="font-size: 0.8rem; color: #cbd5e1; margin-bottom: 15px; padding-left: 20px;">
+                                <li>Duración: 3 días</li>
+                                <li>Restaura: 100%</li>
+                                <li>Costo: $50,000</li>
+                            </ul>
+                            <button class="modal-btn btn-primary" style="width: 100%; padding: 12px; background: #8b5cf6; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
+                                Realizar Check B
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: RUTA -->
+            <div class="tab-content" data-content="route">
+                <div style="padding: 24px;">
+                    <div style="background: linear-gradient(135deg, rgba(74, 144, 226, 0.1) 0%, rgba(53, 122, 189, 0.1) 100%); border: 2px solid rgba(74, 144, 226, 0.3); border-radius: 12px; padding: 24px; margin-bottom: 24px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <div>
+                                <h3 style="margin: 0 0 8px 0; font-size: 1.6rem; color: white;">
+                                    LMML <span style="color: #4a90e2;">✈</span> LEZL
+                                </h3>
+                                <p style="margin: 0; font-size: 0.9rem; color: #8e98a8;">
+                                    2,489 km
+                                </p>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 1.8rem; font-weight: bold; color: #00c48c;">
+                                    $63,900
+                                </div>
+                                <div style="font-size: 0.75rem; color: #8e98a8; text-transform: uppercase;">
+                                    Ingresos Diarios
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button style="width: 100%; padding: 14px; background: rgba(231, 76, 60, 0.1); border: 2px solid rgba(231, 76, 60, 0.3); color: #e74c3c; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 0.95rem;">
+                            ❌ Eliminar Ruta
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching
+        const tabBtns = document.querySelectorAll('.aircraft-tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetTab = btn.dataset.tab;
+                
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+
+                btn.classList.add('active');
+                const targetContent = document.querySelector(`[data-content="${targetTab}"]`);
+                if (targetContent) {
+                    targetContent.classList.add('active');
+                }
+            });
+        });
+
+        // Collapsible sections
+        const collapsibles = document.querySelectorAll('.collapsible-header');
+        collapsibles.forEach(header => {
+            header.addEventListener('click', () => {
+                const section = header.closest('.collapsible-section');
+                section.classList.toggle('expanded');
+            });
+        });
+    </script>
+</body>
+</html>

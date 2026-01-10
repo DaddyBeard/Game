@@ -1,4 +1,4 @@
-const CACHE_NAME = 'skytycoon-v67';
+const CACHE_NAME = 'skytycoon-v171';
 const ASSETS = [
     './',
     './index.html',
@@ -16,9 +16,11 @@ const ASSETS = [
     './js/managers/economyManager.js',
     './js/managers/routeManager.js',
     './js/managers/fleetManager.js',
-    './js/managers/rivalManager.js',
+    './js/managers/competitorManager.js',
     './js/models/aircraft.js',
     './js/models/airport.js',
+    './js/models/fuelSystem.js',
+    './js/models/fuelProviders.js',
     './js/models/progressionModel.js',
     './js/story/storyManager.js',
     './manifest.json'

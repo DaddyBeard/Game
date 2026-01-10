@@ -1,0 +1,501 @@
+/* Aircraft Details Modal - Estilo "Rutas" */
+
+/* Color Palette from Routes Design */
+:root {
+    --routes-header: #3e5c7d;
+    --routes-tab-active: #4a90e2;
+    --routes-section: #f5a623;
+    --routes-status-green: #7ed321;
+    --routes-status-blue: #4a7c99;
+    --routes-revenue: #00c48c;
+    --routes-text-gray: #8e98a8;
+    --routes-bg-dark: #2c3e50;
+}
+
+/* Header with Tabs */
+.aircraft-modal-header {
+    background: linear-gradient(180deg, #4a5f7f 0%, #3e5c7d 100%);
+    padding: 0;
+    margin: 0;
+    border-radius: 8px 8px 0 0;
+}
+
+.aircraft-modal-tabs {
+    display: flex;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.3);
+}
+
+.aircraft-tab-btn {
+    flex: 1;
+    padding: 16px 20px;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-bottom: 3px solid transparent;
+    position: relative;
+}
+
+.aircraft-tab-btn:hover {
+    color: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.aircraft-tab-btn.active {
+    color: white;
+    background: rgba(74, 144, 226, 0.2);
+    border-bottom-color: #4a90e2;
+}
+
+.aircraft-tab-btn .tab-icon {
+    margin-right: 8px;
+    font-size: 1.1em;
+}
+
+/* Hero Section with Aircraft Image */
+.aircraft-hero {
+    position: relative;
+    height: 280px;
+    background: linear-gradient(135deg, #1a2332 0%, #2c3e50 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-bottom: 3px solid #3e5c7d;
+}
+
+.aircraft-hero img {
+    max-width: 90%;
+    max-height: 250px;
+    object-fit: contain;
+    filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.5));
+}
+
+.aircraft-status-badge {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.aircraft-status-badge.idle {
+    background: #4a90e2;
+    color: white;
+}
+
+.aircraft-status-badge.flight {
+    background: #7ed321;
+    color: white;
+}
+
+.aircraft-status-badge.maintenance {
+    background: #f5a623;
+    color: white;
+}
+
+.aircraft-status-badge .status-icon {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: white;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.aircraft-registration {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #4a90e2;
+    backdrop-filter: blur(10px);
+}
+
+/* Aircraft Info Header */
+.aircraft-info-header {
+    background: #34495e;
+    padding: 20px;
+    border-bottom: 2px solid #2c3e50;
+}
+
+.aircraft-name {
+    font-size: 1.8rem;
+    font-weight: 300;
+    margin: 0 0 8px 0;
+    color: white;
+}
+
+.aircraft-subtitle {
+    color: #8e98a8;
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+/* Two Column Layout */
+.aircraft-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    background: #2c3e50;
+}
+
+.aircraft-column {
+    background: #34495e;
+    padding: 24px;
+}
+
+.column-section {
+    margin-bottom: 24px;
+}
+
+.column-section:last-child {
+    margin-bottom: 0;
+}
+
+.section-header {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #8e98a8;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.spec-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.spec-row:last-child {
+    border-bottom: none;
+}
+
+.spec-label {
+    color: #8e98a8;
+    font-size: 0.9rem;
+}
+
+.spec-value {
+    color: white;
+    font-weight: 600;
+    font-size: 1.05rem;
+}
+
+.spec-value.highlight {
+    color: #4a90e2;
+}
+
+.spec-value.success {
+    color: #7ed321;
+}
+
+.spec-value.warning {
+    color: #f5a623;
+}
+
+.spec-value.danger {
+    color: #e74c3c;
+}
+
+/* Collapsible Sections */
+.collapsible-section {
+    margin-bottom: 16px;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #2c3e50;
+}
+
+.collapsible-header {
+    background: linear-gradient(90deg, #f5a623 0%, #f39c12 100%);
+    padding: 14px 20px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+    user-select: none;
+}
+
+.collapsible-header:hover {
+    background: linear-gradient(90deg, #f39c12 0%, #f5a623 100%);
+}
+
+.collapsible-title {
+    color: white;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.collapsible-chevron {
+    transition: transform 0.3s ease;
+    color: white;
+    font-size: 1.2em;
+}
+
+.collapsible-section.expanded .collapsible-chevron {
+    transform: rotate(180deg);
+}
+
+.collapsible-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    background: #34495e;
+}
+
+.collapsible-section.expanded .collapsible-content {
+    max-height: 1000px;
+}
+
+.collapsible-body {
+    padding: 20px;
+}
+
+/* Seat Configuration Visual */
+.seats-visual {
+    display: flex;
+    gap: 20px;
+    justify-content: space-around;
+    margin-top: 16px;
+}
+
+.seat-class {
+    text-align: center;
+    flex: 1;
+}
+
+.seat-icon-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    justify-content: center;
+    margin-bottom: 12px;
+    min-height: 60px;
+    align-items: center;
+}
+
+.seat-icon {
+    font-size: 1.5rem;
+    opacity: 0.8;
+}
+
+.seat-icon.economy { color: #3498db; }
+.seat-icon.premium { color: #9b59b6; }
+.seat-icon.business { color: #e67e22; }
+
+.seat-count {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: white;
+    font-family: var(--font-mono);
+}
+
+.seat-label {
+    font-size: 0.75rem;
+    color: #8e98a8;
+    text-transform: uppercase;
+    margin-top: 4px;
+}
+
+.seat-fraction {
+    font-size: 0.9rem;
+    color: #95a5a6;
+    margin-top: 4px;
+}
+
+/* Flight History Table */
+.flight-history-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.flight-history-table thead {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.flight-history-table th {
+    padding: 12px 8px;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #8e98a8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.flight-history-table td {
+    padding: 12px 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 0.9rem;
+}
+
+.flight-history-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.flight-code {
+    font-family: var(--font-mono);
+    font-weight: bold;
+    color: white;
+}
+
+.flight-route {
+    color: #8e98a8;
+    font-size: 0.85rem;
+}
+
+.flight-revenue {
+    color: #00c48c;
+    font-weight: bold;
+    font-size: 1.05rem;
+}
+
+.flight-pax {
+    color: #4a90e2;
+}
+
+.flight-date {
+    color: #8e98a8;
+    font-size: 0.8rem;
+}
+
+/* Close button */
+.aircraft-close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.5);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 100;
+    backdrop-filter: blur(5px);
+}
+
+.aircraft-close-btn:hover {
+    background: rgba(244, 63, 94, 0.8);
+    border-color: #f43f5e;
+    transform: scale(1.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .aircraft-content {
+        grid-template-columns: 1fr;
+    }
+    
+    .aircraft-modal-tabs {
+        flex-wrap: wrap;
+    }
+    
+    .aircraft-tab-btn {
+        flex: 1 1 50%;
+    }
+    
+    .seats-visual {
+        flex-direction: column;
+    }
+}
+
+/* Performance Stats Cards */
+.perf-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.perf-stat-card {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid;
+}
+
+.perf-stat-card.revenue {
+    border-color: #00c48c;
+}
+
+.perf-stat-card.passengers {
+    border-color: #4a90e2;
+}
+
+.perf-stat-card.hours {
+    border-color: #f5a623;
+}
+
+.perf-stat-card.age {
+    border-color: #9b59b6;
+}
+
+.perf-stat-label {
+    font-size: 0.7rem;
+    color: #8e98a8;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+}
+
+.perf-stat-value {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: white;
+}
+
+.perf-stat-card.revenue .perf-stat-value {
+    color: #00c48c;
+}
+
+.perf-stat-card.passengers .perf-stat-value {
+    color: #4a90e2;
+}
+
+.perf-stat-card.hours .perf-stat-value {
+    color: #f5a623;
+}
+
+.perf-stat-card.age .perf-stat-value {
+    color: #9b59b6;
+}
