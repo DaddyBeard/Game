@@ -7,6 +7,7 @@ import { StoryManager } from '../story/storyManager.js';
 import { FleetManager } from '../managers/fleetManager.js';
 import { RouteManager } from '../managers/routeManager.js';
 import { CompetitorManager } from '../managers/competitorManager.js';
+import { MissionManager } from '../managers/missionManager.js';
 import { AIRPORTS, Airport } from '../models/airport.js';
 import { DB } from './db.js';
 import { LEVEL_REQUIREMENTS } from '../models/progressionModel.js';
@@ -48,7 +49,14 @@ export class GameManager {
                 byRoute: {},
                 // {date, reason, routeId, impactedContracts: []}
                 incidents: []
-            }
+            },
+            // ==============================================
+            // SISTEMA DE MICRO-OBJETIVOS
+            // ==============================================
+            completedMissions: [], // IDs de misiones completadas
+            activeMission: null, // Misión activa actual
+            missionHistory: [], // Historial de misiones completadas
+            missionNotifications: [] // Notificaciones pendientes para UI
         };
 
         this.managers = {
@@ -57,7 +65,8 @@ export class GameManager {
             story: new StoryManager(this),
             fleet: new FleetManager(this),
             routes: new RouteManager(this),
-            competitors: new CompetitorManager(this)
+            competitors: new CompetitorManager(this),
+            missions: new MissionManager(this)
         };
         
         // Sistema de niveles y progresión
@@ -229,6 +238,18 @@ export class GameManager {
 
         // Validate final state before saving
         await this.validateAndRestoreGameState();
+        
+        // Inicializar sistema de misiones después de configurar el juego
+        // Resetear estado de misiones para nueva partida
+        this.state.completedMissions = [];
+        this.state.activeMission = null;
+        this.state.missionHistory = [];
+        this.state.missionNotifications = [];
+        
+        if (this.managers.missions) {
+            this.managers.missions.init();
+        }
+        
         await this.save();
 
         console.log('✅ New Game Started - Parameters Validated:', {
@@ -433,6 +454,11 @@ export class GameManager {
             if (data.fleet) this.managers.fleet.loadData(data.fleet);
             if (data.routes) this.managers.routes.loadData(data.routes);
 
+            // Inicializar sistema de misiones
+            if (this.managers.missions) {
+                this.managers.missions.init();
+            }
+
             // Dev cheat for now
             this.state.money = 999999999;
 
@@ -469,6 +495,11 @@ export class GameManager {
         this.managers.time.update(delta);
         this.managers.economy.update(delta);
         this.managers.routes.update();
+        
+        // Actualizar sistema de misiones (verificar progreso y completar)
+        if (this.managers.missions) {
+            this.managers.missions.update();
+        }
     }
 
     async openSecondaryHub(iataCode) {

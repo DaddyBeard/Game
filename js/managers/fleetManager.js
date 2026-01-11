@@ -71,6 +71,11 @@ export class FleetManager {
 
         this.ownedPlanes.push(newPlane);
 
+        // Verificar misiones inmediatamente después de comprar avión
+        if (this.game.managers.missions) {
+            this.game.managers.missions.update();
+        }
+
         // Auto-save
         this.game.save();
 

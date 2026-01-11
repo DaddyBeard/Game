@@ -9,6 +9,11 @@ export class RouteManager {
     loadData(data) {
         if (Array.isArray(data)) {
             this.routes = data.map(route => {
+                // Migration: Añadir status 'active' por defecto si no existe
+                if (!route.status) {
+                    route.status = 'active';
+                }
+                
                 // Migration: Introduce assignments[] for multi-aircraft routes
                 if (!route.assignments) {
                     route.assignments = [];
@@ -360,6 +365,7 @@ export class RouteManager {
             frequency: 7, // Vuelos por semana (1, 2, 3, 7, 14)
             dailyRevenue: this.calculatePotentialRevenue(dist, seats, priceMultiplier, originDemandFactor, destDemandFactor, originId, destId, 7),
             hubBase: hubBase, // Track which hub this route operates from
+            status: 'active', // Estado de la ruta (active, paused, closed)
             events: [], // Array para eventos (cancelaciones, retrasos, overbooking)
             lastEventCheck: this.game.state.date, // Última vez que se verificó eventos
             assignments: [
@@ -385,6 +391,11 @@ export class RouteManager {
 
         // Start first flight immediately for the initial assignment
         this.startFlight(plane, route, true);
+
+        // Verificar misiones inmediatamente después de crear ruta
+        if (this.game.managers.missions) {
+            this.game.managers.missions.update();
+        }
 
         this.game.save();
         return { success: true, route: route };

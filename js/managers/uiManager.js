@@ -544,6 +544,12 @@ export class UIManager {
 
         // Check and show tips
         this.checkAndShowTips();
+
+        // Actualizar panel de misiones (sistema de micro-objetivos)
+        this.updateMissionPanel();
+
+        // Procesar notificaciones de misiones pendientes
+        this.processMissionNotifications();
     }
 
     calculateLevelProgressPercent() {
@@ -7239,5 +7245,198 @@ export class UIManager {
                 this.showNotification('❌ Error', result.msg, 'warning');
             }
         });
+    }
+
+    // ==========================================
+    // SISTEMA DE MICRO-OBJETIVOS (MISIONES)
+    // ==========================================
+
+    /**
+     * Actualizar panel de misión activa en el header
+     */
+    updateMissionPanel() {
+        const missionPanel = this.getElement('mission-panel');
+        if (!missionPanel) return;
+
+        const missionManager = this.game.managers.missions;
+        if (!missionManager) {
+            missionPanel.classList.add('hidden');
+            return;
+        }
+
+        const activeMission = missionManager.getActiveMission();
+        if (!activeMission) {
+            missionPanel.classList.add('hidden');
+            return;
+        }
+
+        // Mostrar panel
+        missionPanel.classList.remove('hidden');
+
+        // Actualizar título y objetivo
+        const titleEl = this.getElement('mission-title');
+        const objectiveEl = this.getElement('mission-objective');
+        const progressFillEl = this.getElement('mission-progress-fill');
+        const progressTextEl = this.getElement('mission-progress-text');
+
+        if (titleEl) {
+            titleEl.textContent = activeMission.name;
+        }
+
+        if (objectiveEl) {
+            objectiveEl.textContent = activeMission.objective;
+        }
+
+        // Obtener progreso de la misión
+        const progress = missionManager.getMissionProgress();
+        if (progress && progressFillEl && progressTextEl) {
+            progressFillEl.style.width = `${progress.progress}%`;
+            progressTextEl.textContent = progress.description || 'En progreso...';
+        } else {
+            if (progressFillEl) progressFillEl.style.width = '0%';
+            if (progressTextEl) progressTextEl.textContent = 'Iniciando...';
+        }
+    }
+
+    /**
+     * Procesar notificaciones de misiones pendientes
+     */
+    processMissionNotifications() {
+        if (!this.game.state.missionNotifications || this.game.state.missionNotifications.length === 0) {
+            return;
+        }
+
+        // Procesar todas las notificaciones pendientes
+        const notifications = [...this.game.state.missionNotifications];
+        this.game.state.missionNotifications = []; // Limpiar después de procesar
+
+        notifications.forEach(notification => {
+            if (notification.type === 'activated') {
+                this.showMissionActivatedNotification(notification.mission);
+            } else if (notification.type === 'completed') {
+                this.showMissionCompletedNotification(notification.mission, true);
+            } else if (notification.type === 'failed') {
+                this.showMissionCompletedNotification(notification.mission, false);
+            }
+        });
+    }
+
+    /**
+     * Mostrar notificación cuando se activa una misión
+     */
+    showMissionActivatedNotification(mission) {
+        const html = `
+            <div style="padding: 30px 20px; text-align: center;">
+                <div style="font-size: 3rem; margin-bottom: 20px;">🎯</div>
+                <h2 style="margin: 0 0 15px 0; color: #e2e8f0; font-size: 1.5rem;">Nueva Misión</h2>
+                <h3 style="margin: 0 0 20px 0; color: #3b82f6; font-size: 1.2rem;">${mission.name}</h3>
+                <div style="background: rgba(59, 130, 246, 0.1); border: 2px solid rgba(59, 130, 246, 0.3); border-radius: 12px; padding: 20px; margin: 20px 0;">
+                    <p style="color: #cbd5e1; font-size: 1rem; line-height: 1.6; margin: 0 0 15px 0;">
+                        ${mission.context}
+                    </p>
+                    <div style="background: rgba(255, 255, 255, 0.05); border-radius: 8px; padding: 15px; margin-top: 15px;">
+                        <div style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">Objetivo</div>
+                        <div style="color: #e2e8f0; font-size: 1rem; font-weight: 600;">${mission.objective}</div>
+                    </div>
+                </div>
+                <button class="modal-btn btn-primary" onclick="window.app.ui.hideModal()" style="padding: 12px 24px; margin-top: 20px;">
+                    Entendido
+                </button>
+            </div>
+        `;
+        this.showImmersiveModal(html);
+
+        // Actualizar panel inmediatamente
+        this.updateMissionPanel();
+    }
+
+    /**
+     * Mostrar notificación cuando se completa una misión
+     */
+    showMissionCompletedNotification(mission, success) {
+        const reward = mission.reward || {};
+        const rewardText = [];
+        if (reward.reputation) rewardText.push(`+${reward.reputation} reputación`);
+        if (reward.money) rewardText.push(`+$${reward.money.toLocaleString()}`);
+        if (reward.costReduction) rewardText.push(`${(reward.costReduction * 100).toFixed(0)}% reducción de costes`);
+
+        const html = `
+            <div style="padding: 40px 20px; text-align: center;">
+                <div style="font-size: 4rem; margin-bottom: 20px;">${success ? '✅' : '❌'}</div>
+                <h2 style="margin: 0 0 10px 0; color: ${success ? '#22c55e' : '#ef4444'}; font-size: 1.8rem;">
+                    ${success ? '¡Misión Completada!' : 'Misión Fallida'}
+                </h2>
+                <h3 style="margin: 0 0 25px 0; color: #e2e8f0; font-size: 1.3rem;">${mission.name}</h3>
+                
+                ${success && rewardText.length > 0 ? `
+                <div style="background: rgba(34, 197, 94, 0.1); border: 2px solid rgba(34, 197, 94, 0.3); border-radius: 12px; padding: 20px; margin: 20px 0;">
+                    <div style="color: #86efac; font-size: 0.9rem; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;">Recompensas</div>
+                    <div style="color: #e2e8f0; font-size: 1.1rem; font-weight: 600;">
+                        ${rewardText.join('<br>')}
+                    </div>
+                </div>
+                ` : ''}
+                
+                ${!success ? `
+                <div style="background: rgba(239, 68, 68, 0.1); border: 2px solid rgba(239, 68, 68, 0.3); border-radius: 12px; padding: 20px; margin: 20px 0;">
+                    <p style="color: #fca5a5; font-size: 1rem; margin: 0;">
+                        No te desanimes. Otra misión aparecerá pronto.
+                    </p>
+                </div>
+                ` : ''}
+                
+                <button class="modal-btn ${success ? 'btn-primary' : 'btn-secondary'}" onclick="window.app.ui.hideModal()" style="padding: 12px 24px; margin-top: 20px;">
+                    Continuar
+                </button>
+            </div>
+        `;
+        this.showImmersiveModal(html);
+
+        // Mostrar también notificación en la barra de estado
+        if (success) {
+            this.showNotification('🎯 Misión Completada', mission.name, 'success');
+        } else {
+            this.showNotification('❌ Misión Fallida', mission.name, 'error');
+        }
+
+        // Actualizar panel
+        this.updateMissionPanel();
+    }
+
+    /**
+     * Método helper para mostrar notificaciones (si no existe)
+     */
+    showNotification(title, message, type = 'info') {
+        // Crear elemento de notificación temporal
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: ${type === 'success' ? 'rgba(34, 197, 94, 0.9)' : type === 'error' ? 'rgba(239, 68, 68, 0.9)' : 'rgba(59, 130, 246, 0.9)'};
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            z-index: 10000;
+            animation: slideInRight 0.3s ease-out;
+            max-width: 350px;
+        `;
+        notification.innerHTML = `
+            <div style="font-weight: 600; margin-bottom: 5px;">${title}</div>
+            <div style="font-size: 0.9rem; opacity: 0.95;">${message}</div>
+        `;
+
+        document.body.appendChild(notification);
+
+        // Auto-remover después de 4 segundos
+        setTimeout(() => {
+            notification.style.animation = 'slideOutRight 0.3s ease-in';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 300);
+        }, 4000);
     }
 }
